@@ -1,12 +1,12 @@
 
 export function FETCH_NODE_API_URL() 
 {
-      return process.env.FETCH_API_URL;
+      return 'https://react-admin-panel-spinx.herokuapp.com/front_api/';//process.env.FETCH_API_URL;
 }
 
 export function BACKEND_FETCH_NODE_API_URL() 
 {
-      return process.env.BACKEND_FETCH_API_URL;
+      return 'https://react-admin-panel-spinx.herokuapp.com/admin_api/';//process.env.BACKEND_FETCH_API_URL;
 }
 
 export function simple_header() 
