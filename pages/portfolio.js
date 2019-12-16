@@ -6,8 +6,10 @@ import { Router } from '../routes';
 import {FETCH_NODE_API_URL} from '../components/ServerApi';
 import FadeIn from 'react-fade-in';
 import localStorage from "localStorage";
+import requiresAuth from '../components/requiresAuth';
 
-export default class Portfolio extends Component 
+
+class Portfolio extends Component 
 {
     constructor(props) {
         super(props)
@@ -19,7 +21,6 @@ export default class Portfolio extends Component
             current_data_slug:[],
             class_active:'1',
             visible:true,
-            visiable_flag:false,
         };
 
         this.detail_page = this.detail_page.bind(this);
@@ -68,21 +69,6 @@ export default class Portfolio extends Component
 
     async componentDidMount()
     {
-         
-        if(localStorage.getItem("token")==null)
-        {
-            window.location.href = '/login';
-            await this.setState({
-                visiable_flag : false,
-             });
-            return false
-        }
-        else{
-            
-            await this.setState({
-                visiable_flag : true,
-             });
-        }
 
         const res = await axios.post(FETCH_NODE_API_URL()+'all_portfolio');
         const record = res.data.data.rows;
@@ -210,7 +196,6 @@ export default class Portfolio extends Component
             
               <React.Fragment>
                 {
-                    visiable_flag && 
                     <Layout title='Portfolio - Aurora Capital Partners'>
                     <section className="cmn-banner page-title" >
                     <div className="imgDiv web-view" style={{"backgroundImage":"url(/static/images/portfolio-banner.jpg)"}}></div>
@@ -239,29 +224,38 @@ export default class Portfolio extends Component
                     </ul>
                     </div>
                     </div>
+
                     <div className="cmn-tabs-content">
                     <div className="clearfix fix-wrap">
-                    <div className="portfolio-row">
-                    <h3>CURRENT</h3>
-                    <ul className="cmn-list logo-list">
-                        {
-                                current_data.map((record) =>{
-                                    return  <FadeIn delay={300} transitionDuration={500} key={record}><li key={record}><a href="#" onClick={(e) => this.detail_page(e, 'c')}><img ids="current" src={record} alt="logo" /></a></li></FadeIn>
-                                })
-                        }
-                    </ul>
-                    
-                    </div>
-                    <div className="portfolio-row">
-                    <h3>HISTORICAL</h3>
-                        <ul className="cmn-list logo-list">
-                            {
-                                history_data.map((record) =>{
-                                    return <FadeIn delay={300} transitionDuration={500} key={record}><li key={record}><a href="#" onClick={(e) => this.detail_page(e, 'h')}><img ids="history" src={record} alt="logo" /></a></li></FadeIn>
-                                })
-                            }
-                        </ul>
-                    </div>
+ 
+                     {
+                        current_data.length>0 &&
+                        <div className="portfolio-row">
+                        <h3>CURRENT</h3>
+                            <ul className="cmn-list logo-list">
+                                {
+                                        current_data.map((record) =>{
+                                            return  <FadeIn delay={300} transitionDuration={500} key={record}><li key={record}><a href="#" onClick={(e) => this.detail_page(e, 'c')}><img ids="current" src={record} alt="logo" /></a></li></FadeIn>
+                                        })
+                                }
+                            </ul>
+                        </div>
+                     }  
+                       
+                    {
+                        history_data.length>0 &&
+                        <div className="portfolio-row">
+                            <h3>HISTORICAL</h3>
+                            <ul className="cmn-list logo-list">
+                                {
+                                    history_data.map((record) =>{
+                                        return <FadeIn delay={300} transitionDuration={500} key={record}><li key={record}><a href="#" onClick={(e) => this.detail_page(e, 'h')}><img ids="history" src={record} alt="logo" /></a></li></FadeIn>
+                                    })
+                                }
+                            </ul>
+                        </div>
+                    }
+
                     </div>
                     </div>
                     </section>
@@ -273,3 +267,5 @@ export default class Portfolio extends Component
         );
       }
 }
+
+export default requiresAuth(Portfolio);

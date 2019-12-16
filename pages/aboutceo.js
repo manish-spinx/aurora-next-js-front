@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import axios from 'axios'; 
-
+import localStorage from "localStorage";
 import Layout from '../components/Layout';
 import { Router } from '../routes';
 import {FETCH_NODE_API_URL} from '../components/ServerApi';
+import Hocnextpre from '../components/Hocnextpre';
 
-export default class Aboutceo extends Component 
+class Aboutceo extends Component 
 {
     constructor(props) {
         super(props)
@@ -14,7 +15,6 @@ export default class Aboutceo extends Component
             api_data:[],
         };
 
-        
         this.ceodetail = this.ceodetail.bind(this);
     }
 
@@ -22,8 +22,18 @@ export default class Aboutceo extends Component
     {
         const res =await axios.post(FETCH_NODE_API_URL()+'all_people',{p_type:'3'});
 
+        const record = res.data.data.rows;
+        const record_current_slug = [];
+
+        record.map((item, key) =>{
+            let small_character = item.name.toLowerCase();
+            let dynamic_slug = small_character.replace(/\s+/g, '-');
+            record_current_slug.push(dynamic_slug);
+        }); 
+
         await this.setState({
             api_data : res.data.data.rows,
+            current_data_slug:record_current_slug
          });
 
     }
@@ -31,11 +41,27 @@ export default class Aboutceo extends Component
     ceodetail(e)
     {
         e.preventDefault(); 
-        const title_name = e.target.id;
-        var small_character = title_name.toLowerCase();
-        var dynamic_slug = small_character.replace(/\s+/g, '-');        
-        //Router.pushRoute('/About/CEOs/'+dynamic_slug);
-        Router.pushRoute('/About/CEOs/'+dynamic_slug).then(() => window.scrollTo(0, 0));
+
+        let t_name = e.target.id;
+        let cur_index = "ourteam_ceo_c_i";
+        let cur_total = "ourteam_ceo_t_i";        
+        let cur_array = "ourteam_ceo_page_slug";
+        let routes = "/About/CEOs/";    
+        var c_d_slug = this.state.current_data_slug;          
+        this.props.hoc_details_page(t_name,cur_index,cur_total,cur_array,routes,c_d_slug);
+
+        // const title_name = e.target.id;
+        // var small_character = title_name.toLowerCase();
+        // var dynamic_slug = small_character.replace(/\s+/g, '-'); 
+        
+        // let check_slug =  this.state.current_data_slug.includes(dynamic_slug);
+        // let check_slug_index = this.state.current_data_slug.indexOf(dynamic_slug);
+
+        // localStorage.setItem("ourteam_ceo_c_i",check_slug_index);
+        // localStorage.setItem("ourteam_ceo_t_i",(this.state.current_data_slug.length>0)?this.state.current_data_slug.length-1:this.state.current_data_slug.length);
+        // localStorage.setItem("ourteam_ceo_page_slug",JSON.stringify(this.state.current_data_slug));        
+        // Router.pushRoute('/About/CEOs/'+dynamic_slug).then(() => window.scrollTo(0, 0));
+
     }
 
     calladvisiors(e)
@@ -82,21 +108,21 @@ export default class Aboutceo extends Component
                 <p>We believe CEOs choose Aurora because they consider our program the optimal environment to catalyze their companies’ success. We feel privileged to be their partners.</p>
                 </div>
                 </div>
+                {
+                    api_data.length>0 &&
+                    <div className="people-list">
+                        <div className="fix-wrap">
+                            <ul className="cmn-list">
+                                {
+                                    api_data.map((item, key) =>{
+                                        return <li key={item.name}><h3><a href="#" id={item.name} onClick={this.ceodetail}>{item.name}</a></h3><p>{item.job_title_other}</p></li>
+                                    })
 
-                <div className="people-list">
-                <div className="fix-wrap">
-                <ul className="cmn-list">
-
-                    {
-                        api_data.map((item, key) =>{
-                            return <li key={item.name}><h3><a href="#" id={item.name} onClick={this.ceodetail}>{item.name}</a></h3><p>{item.job_title_other}</p></li>
-                        })
-
-                    }
-
-                </ul>
-                </div>
-                </div>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                }
 
                 </div>
                 </section>
@@ -105,3 +131,5 @@ export default class Aboutceo extends Component
         );
       }
 }
+
+export default Hocnextpre(Aboutceo)

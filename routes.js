@@ -25,12 +25,12 @@ module.exports = routes()
 
 .add('login','/Login')
 .add('register','/Register')
+.add('changepassword','/Changepassword')
+.add('editprofile','/Editprofile')
+.add('forgetpassword','/Forgetpassword')
+.add('resetpassword','/Resetpassword/:slug')
 
 .add('errorPage','Error/PageNotFound')
-
-
-
-
 
 //.add('portfolioNew', '/portfolios/new')
 // .add('portfolio', '/portfolio/:id')

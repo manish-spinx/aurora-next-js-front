@@ -9,6 +9,11 @@ export function BACKEND_FETCH_NODE_API_URL()
       return 'https://react-admin-panel-spinx.herokuapp.com/admin_api/';//process.env.BACKEND_FETCH_API_URL;
 }
 
+export function FRONT_RESET_PASSWORD_URL() 
+{
+      return 'https://aurora-next-js.herokuapp.com/Resetpassword/';//'http://localhost:3010/Resetpassword/';//process.env.FRONT_RESET_PASSWORD_LINK;
+}
+
 export function simple_header() 
 {
       // consider as 0 flag

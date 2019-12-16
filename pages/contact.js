@@ -267,7 +267,7 @@ export default class Contact extends Component
                 <div className="contact-right">
                 <h2>Let's Connect</h2>
                 <p>10877 Wilshire Boulevard, 21st Floor <br/>Los Angeles, CA 90024</p>
-                <p><strong>T.</strong> <a href="tel:(310) 551-0101" className="phone">(310) 551-0101</a> <br/><strong>E.</strong> <a href="mailto:info@auroracap.com">info@auroracap.com</a></p>
+                <p><strong>T.</strong> <a h="tel:(310) 551-0101" className="phone">(310) 551-0101</a> <br/><strong>E.</strong> <a href="mailto:info@auroracap.com">info@auroracap.com</a></p>
                 <p><a href="https://www.linkedin.com/company/aurora-capital-group/" target="_blank"><img src="/static/images/linkedin-logo-dark.png" width="19" alt="LinkedIn" /></a></p>
 
                 <div className="gmap" style={{ height: '100vh', width: '100%' }}>

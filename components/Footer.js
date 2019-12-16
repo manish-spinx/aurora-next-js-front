@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Link from 'next/link';
 import axios from 'axios'; 
+import localStorage from "localStorage";
 
 import {FETCH_NODE_API_URL} from './ServerApi';
 
@@ -11,12 +12,26 @@ export default class Footer extends Component
 
         this.state = {
             api_data : [],
+            visiable_flag:false,
         };
 
     }
 
     async componentDidMount()
     {
+        if(localStorage.getItem("token")==null)
+        {
+            await this.setState({
+                visiable_flag : false,
+             });
+            return false
+        }
+        else{
+            await this.setState({
+                visiable_flag : true,
+             });
+        }
+
         const res = await axios.post(FETCH_NODE_API_URL()+'all_strategies');
 
         await this.setState({
@@ -31,7 +46,7 @@ export default class Footer extends Component
     
     render() {
 
-        const {api_data} = this.state
+        const {api_data,visiable_flag} = this.state
 
         return (
         <footer style={{"backgroundImage":"url(/static/images/footerbg.jpg)"}}>
@@ -69,7 +84,10 @@ export default class Footer extends Component
                         </ul>
                     </div>
                     <div className="f-col fix-col">
-                            <h4><Link href="/portfolio" as="/Portfolio"><a>PORTFOLIO</a></Link></h4>
+                            {
+                                visiable_flag && 
+                                <h4><Link href="/portfolio" as="/Portfolio"><a>PORTFOLIO</a></Link></h4>
+                            }
                             <h4><Link href="/news" as="/News"><a>News</a></Link></h4>
                             <h4><Link href="/contact" as="/Contact"><a>CONTACT</a></Link></h4>
 

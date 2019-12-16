@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
 import axios from 'axios'; 
-import localStorage from "localStorage";
-
-
 import Layout from '../components/Layout';
 import { Router } from '../routes';
 import {
@@ -11,79 +8,76 @@ import {
         simple_header
        } from '../components/ServerApi';
 
-//import { ToastContainer, toast } from 'react-toastify';
-//import 'react-toastify/dist/ReactToastify.css';
 
-
-
-export default class Register extends Component 
+export default class Resetpassword extends Component 
 {
     constructor(props) {
         super(props)
 
+        var separate_url = this.props.url.asPath.split("/");
+
         this.state = {
             api_data:[],
-            email:'',
             password:'',
             repassword:'',
-            name:'',
-            emailError:'',
             passwordError:'',
             repasswordError:'',
-            nameError:'',
             username_and_password:'',
             server_msg_display:false,
+            separate_url:separate_url
         };
         
         this.submitForm = this.submitForm.bind(this);
         this.onChange_watch = this.onChange_watch.bind(this);
         this.check_validation = this.check_validation.bind(this);
-        this.keyPress = this.keyPress.bind(this);
         this.close_alert = this.close_alert.bind(this);
         
     }
 
 async componentDidMount()
 {
-    
 
+    axios.post(BACKEND_FETCH_NODE_API_URL()+"reset_pwd_link_check",
+    {'forget_password_code':this.state.separate_url[2]}) 
+    .then((response) => 
+    {
+           if(response.status==202)
+           { 
+                this.setState({
+                    server_msg_display : true,
+                    server_msg:response.data.message.message,
+                });
+
+                setTimeout(() => {
+                    Router.pushRoute('/login').then(() => window.scrollTo(0, 0));
+                  }, 800); 
+           }
+    }); 
 }
 
 check_validation = () =>
 {
-    let emailError = "";
     let passwordError = "";
     let repasswordError="";
-    let nameError="";
-
-    if(!this.state.email)
-    {
-        emailError = 'Email is Required.';
-    }
 
     if(!this.state.password)
     {
-        passwordError = 'Password is Required.';
+        passwordError = 'New Password is Required.';
     }
 
     if(!this.state.repassword)
     {
-        repasswordError = 'Repeat Password is Required.';
-    }
-
-    if(!this.state.name)
-    {
-        nameError = 'Name is Required.';
+        repasswordError = 'Confirm Password is Required.';
     }
 
     if(this.state.password!=this.state.repassword)
-       {
-        repasswordError = 'New And Repeat Password does not match.';
-       }
-
-    if(emailError || passwordError || nameError || repasswordError)
     {
-        this.setState({emailError,passwordError,nameError,repasswordError});
+        repasswordError = 'New And Confirm Password does not match.';
+    }
+
+    if(passwordError || repasswordError)
+    {
+        this.setState({passwordError,repasswordError});
         return false;
     }
     else{
@@ -95,47 +89,45 @@ backurl(e)
 {
     e.preventDefault(); 
     Router.pushRoute('/login').then(() => window.scrollTo(0, 0));
-
 }
 
 submitForm(e){
     e.preventDefault(); 
+
     const isVaild = this.check_validation();
     if(isVaild)
     {
-        axios.post(FETCH_NODE_API_URL()+'register', 
-                                                  {
-                                                    'email':this.state.email,
-                                                    'password':this.state.password,
-                                                    'name':this.state.name,
-                                                  }) 
-          .then((response) => 
+        axios.post(BACKEND_FETCH_NODE_API_URL()+'reset_password_update', 
+        {
+            'forget_password_code':this.state.separate_url[2],
+            'npassword':this.state.password,
+            'cfmpassword':this.state.repassword
+        })
+        .then((response) => 
           {
+              //console.log(response);
+
               if(response.status==200)
               {
                     this.setState({
                         server_msg_display : true,
-                        email:'',
+                        server_msg:response.data.data.message,
                         password:'',
                         repassword:'',
-                        name:'',
-                        emailError:'',
                         passwordError:'',
                         repasswordError:'',
-                        nameError:'',
                         username_and_password:'',
                     });
+
+                    setTimeout(() => {
+                        Router.pushRoute('/login').then(() => window.scrollTo(0, 0));
+                      }, 200);   
               }
               else{
 
-                let emailError = response.data.message.message;
-                this.setState({emailError});
+                let repasswordError = response.data.message.message;
+                this.setState({repasswordError});
               }
-          })
-          .catch((error) => 
-          {
-            // let username_and_password = 'Something wrong at Server side.';
-            // this.setState({username_and_password});
           })
     }
 }
@@ -151,30 +143,21 @@ register_form(e)
 {
     e.preventDefault(); 
     Router.pushRoute('/register').then(() => window.scrollTo(0, 0));
-
 }
 
-keyPress(e){
-    if(e.keyCode == 13){
-      e.preventDefault();
-       this.submitForm(e);
-    }
-  }
-
-  async close_alert(e)
-    {
-        e.preventDefault(); 
-
-        await this.setState({
-            server_msg_display:false
-          });
-    }
+async close_alert(e)
+{
+    e.preventDefault(); 
+    await this.setState({
+        server_msg_display:false
+        });
+}
 
     render() {
 
         
         return (             
-            <Layout title='Register - Aurora Capital Partners'>              
+            <Layout title='Reset Password - Aurora Capital Partners'>              
                 <br/>
 
         <section className="portfolio-content our-team-content">
@@ -191,24 +174,18 @@ keyPress(e){
                             <div className="alert alert-success fade in">
                                 <a data-dismiss="alert" className="close" onClick={this.close_alert}>×</a>
                                 <i className="fa-fw fa fa-check"></i>
-                                Registration Successfully
+                                {this.state.server_msg}
                             </div>
                         </div>
                     }
 
-                    <input type="text" id="name" onKeyDown={this.keyPress} name="name" className="form-control" placeholder="Full name" value={this.state.name} onChange={this.onChange_watch} />
-                    <span className="validation-error">{this.state.nameError}</span>
-
-                    <input type="email" id="email" onKeyDown={this.keyPress} name="email" className="form-control" placeholder="Email address" value={this.state.email} onChange={this.onChange_watch} />  
-                    <span className="validation-error">{this.state.emailError}</span>                  
-
-                    <input type="password" id="password" onKeyDown={this.keyPress} name="password" className="form-control" placeholder="Password" value={this.state.password} onChange={this.onChange_watch} />
+                    <input type="password" id="password" onKeyDown={this.keyPress} name="password" className="form-control" placeholder="New Password" value={this.state.password} onChange={this.onChange_watch} />
                     <span className="validation-error">{this.state.passwordError}</span>
 
-                    <input type="password" id="repassword" onKeyDown={this.keyPress} name="repassword" className="form-control" placeholder="Repeat Password" value={this.state.repassword} onChange={this.onChange_watch} />
+                    <input type="password" id="repassword" onKeyDown={this.keyPress} name="repassword" className="form-control" placeholder="Confirm Password" value={this.state.repassword} onChange={this.onChange_watch} />
                     <span className="validation-error">{this.state.repasswordError}</span>
                     <br/>
-                    <button className="btn btn-primary btn-block" type="button" onClick={this.submitForm} ><i className="fas fa-user-plus"></i> Sign Up</button>
+                    <button className="btn btn-primary btn-block" type="button" onClick={this.submitForm} ><i className="fas fa-user-plus"></i>Submit</button>
                     <a href="#" onClick={this.backurl} id="cancel_signup"><i className="fas fa-angle-left"></i>{'<-'}Login</a>
                 </form>
             

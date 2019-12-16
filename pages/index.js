@@ -35,6 +35,15 @@ export default class Index extends Component
 
              if(res_news.data.data.rows.length>0)
              {
+
+                const record = res_news.data.data.rows;
+                const record_current_slug = [];
+
+                record.map((item, key) =>{
+                    let dynamic_slug = item.slug
+                    record_current_slug.push(dynamic_slug);
+                });
+
                 let first_data =  res_news.data.data.rows[0];
                 await delete res_news.data.data.rows[0];
 
@@ -44,6 +53,7 @@ export default class Index extends Component
                     f_title:first_data.title,
                     f_dateofarticle:moment(first_data.dateofarticle).format("MMM DD,YYYY"),
                     f_slug:first_data.slug,
+                    current_data_slug:record_current_slug
                  });
              }
              else{
@@ -82,6 +92,14 @@ export default class Index extends Component
         const title_name = e.target.id;
         // var small_character = title_name.toLowerCase();
         // var dynamic_slug = small_character.replace(/\s+/g, '-');  
+
+        let check_slug =  this.state.current_data_slug.includes(title_name);
+        let check_slug_index = this.state.current_data_slug.indexOf(title_name);
+
+        localStorage.setItem("news_details_c_i",check_slug_index);
+        localStorage.setItem("news_details_t_i",(this.state.current_data_slug.length>0)?this.state.current_data_slug.length-1:this.state.current_data_slug.length);
+        localStorage.setItem("news_details_page_slug",JSON.stringify(this.state.current_data_slug)); 
+
         Router.pushRoute('/News/'+title_name);
     }
 
@@ -107,23 +125,26 @@ export default class Index extends Component
                 <a href="#" className="btn-primary">LEARN MORE</a>
                 </div>
                 </section>
-                
-                <section className="hp-strategy">
-                <ul className="cmn-list">
-                    {
-                        api_data.map((item, key) =>{
 
-                            return <li key={item._id}>
-                                        <a href="#" onClick={this.handleclick} style={{"backgroundImage":"url("+item.strategy_image_link+")"}}>
-                                            <div className="st-title">
-                                            <h3>{item.name}</h3>
-                                            </div>                               
-                                        </a>
-                                    </li>
-                        })
-                    }
-                </ul>
-                </section>
+                {
+                    api_data.length > 0 &&
+                    <section className="hp-strategy">
+                        <ul className="cmn-list">
+                            {
+                                api_data.map((item, key) =>{
+
+                                    return <li key={item._id}>
+                                                <a href="#" onClick={this.handleclick} style={{"backgroundImage":"url("+item.strategy_image_link+")"}}>
+                                                    <div className="st-title">
+                                                    <h3>{item.name}</h3>
+                                                    </div>                               
+                                                </a>
+                                            </li>
+                                })
+                            }
+                        </ul>
+                    </section>
+                }    
 
                 {
                     api_news_data.length>0 && 

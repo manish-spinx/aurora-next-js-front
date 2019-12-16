@@ -31,8 +31,7 @@ export default class Strategy extends Component
     }
     
     render() {
-
-        const {api_data} = this.state
+        const {api_data} = this.state;
 
         return (
              
@@ -44,7 +43,6 @@ export default class Strategy extends Component
                 <h1>STRATEGY</h1>
                 </div>
                 </section>
-
                 
                 <section className="highlight-box">
                 <div className="fix-wrap">
@@ -66,31 +64,33 @@ export default class Strategy extends Component
                 </div>
                 </section>
 
-                
-                <section className="hp-strategy abt-list">
-                <div className="fix-wrap">
-                <h2 className="section-title">We invest across three sectors.</h2>
-                </div>
-                <ul className="cmn-list">
-
                 {
-                    api_data.map((item, key) =>{
+                   api_data.length > 0 &&
+                   <section className="hp-strategy abt-list">
+                        <div className="fix-wrap">
+                        <h2 className="section-title">We invest across three sectors.</h2>
+                        </div>
+                        <ul className="cmn-list">
 
-                        return <li key={item._id}>
-                            <a href="#" onClick={this.handleclick} style={{"backgroundImage":"url("+item.strategy_image_link+")"}}>
-                                <div className="listImg" style={{"backgroundImage":"url("+item.strategy_image_link+")"}}></div>
-                                <div className="st-title">
-                                <div className="abt-icn"><img src={item.icon_image_link} width="59" alt="Our Team" /></div>
-                                <h3>{item.name}</h3>
-                                <div className="arrow-icn"><img src="/static/images/ourteam-hover-arrow.png" width="27" alt="Arrow" /></div>
-                                </div>
-                            </a>
-                        </li>
-                     })
-                }
+                            {
+                                api_data.map((item, key) =>{
+
+                                    return <li key={item._id}>
+                                        <a href="#" onClick={this.handleclick} style={{"backgroundImage":"url("+item.strategy_image_link+")"}}>
+                                            <div className="listImg" style={{"backgroundImage":"url("+item.strategy_image_link+")"}}></div>
+                                            <div className="st-title">
+                                            <div className="abt-icn"><img src={item.icon_image_link} width="59" alt="Our Team" /></div>
+                                            <h3>{item.name}</h3>
+                                            <div className="arrow-icn"><img src="/static/images/ourteam-hover-arrow.png" width="27" alt="Arrow" /></div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                })
+                            }
                 
-                </ul>
-                </section>
+                        </ul>
+                     </section>
+                }
 
             </Layout>   
           

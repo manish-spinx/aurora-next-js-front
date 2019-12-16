@@ -3,13 +3,13 @@ import axios from 'axios';
 import { Router } from '../routes';
 import ReactHtmlParser from 'react-html-parser';
 import Layout from '../components/Layout';
-
+import localStorage from "localStorage";
 import {FETCH_NODE_API_URL} from '../components/ServerApi';
+import Hocnextpre from '../components/Hocnextpre';
 import FadeIn from 'react-fade-in';
 const server_link = process.env.PORTFOLIO_LOGOO; 
 
-
-export default class Teamdetail extends Component 
+class Teamdetail extends Component 
 {
     constructor(props) {
         super(props)
@@ -27,9 +27,13 @@ export default class Teamdetail extends Component
             title_slug:'',
             portfolio_slider:[],
         };
-
         
         this.detail_page = this.detail_page.bind(this);
+
+        //this.next_and_previous_pagination = this.next_and_previous_pagination.bind(this);
+        this.custom_componentDidMount = this.custom_componentDidMount.bind(this); 
+        //this.next_and_previous_label = this.next_and_previous_label.bind(this);   
+
     }
 
     detail_page(e)
@@ -75,14 +79,139 @@ export default class Teamdetail extends Component
                     title_slug:res_obj.name,
                     portfolio_slider:res_obj.portfolio_image_obj
                 });
+
+                //await this.next_and_previous_label();
+                let data_slug = "ourteam_main_page_slug"; 
+                let cur_index_number = "ourteam_main_c_i";
+                await this.props.n_and_p_label(data_slug,cur_index_number);
             }      
             else{
                 Router.pushRoute('/Error/PageNotFound').then(() => window.scrollTo(0, 0));
             }
     }
+
+    async n_and_p_pagination(e,status)
+    {
+        e.preventDefault();
+        let cur_index = "ourteam_main_c_i";
+        let cur_slug = "ourteam_main_page_slug";
+        let next_slug = "set_next_main_slug";
+        let routes = '/About/OurTeam/';
+
+        await this.props.n_and_p_pagination_hoc(status,cur_index,cur_slug,next_slug,routes);
+        await this.custom_componentDidMount();
+    }
+
+    // async next_and_previous_pagination(e,status)
+    // {
+    //     e.preventDefault(); 
+
+    //     let current_index = localStorage.getItem("ourteam_main_c_i");
+    //     let next_index = '';
+    //     if(status=='n')
+    //     {
+    //        // next
+    //        next_index = parseInt(current_index)+parseInt(1);
+    //     }
+    //     else{
+    //        // previous
+    //        next_index = parseInt(current_index)-parseInt(1);
+    //     }
+        
+    //     let slug_url_array = JSON.parse(localStorage.getItem("ourteam_main_page_slug"));
+    //     let set_next_index_slug = slug_url_array[next_index];
+
+    //     Router.pushRoute('/About/OurTeam/'+set_next_index_slug).then(() => window.scrollTo(0, 0));
+
+    //     localStorage.setItem("ourteam_main_c_i",next_index);
+    //     localStorage.setItem("set_next_main_slug",set_next_index_slug);
+
+    //     await this.custom_componentDidMount();
+
+    // }
+
+    async custom_componentDidMount()
+    {
+        let slug_parameter_test = localStorage.getItem("set_next_main_slug");
+        var original_slug_test = await slug_parameter_test.split("-").join(" ");
+
+        const res = await axios.post(FETCH_NODE_API_URL()+'all_people',{
+            'slug':slug_parameter_test,
+            'original':original_slug_test,
+            'p_type':'1',
+            'get_portfolio':'1',
+         });
+
+            if(res.data.data.rows.length>0)
+            {
+                const res_obj = res.data.data.rows[0];
+
+                await this.setState({
+                    name:res_obj.name,
+                    job_title_other:res_obj.job_title_name,
+                    bio:res_obj.bio,
+                    profile_image_link:res_obj.profile_image_link,
+                    title_slug:res_obj.name,
+                    portfolio_slider:res_obj.portfolio_image_obj
+                });
+
+                //await this.next_and_previous_label();
+                let data_slug = "ourteam_main_page_slug"; 
+                let cur_index_number = "ourteam_main_c_i";
+                await this.props.n_and_p_label(data_slug,cur_index_number);
+            }      
+            else{
+                    Router.pushRoute('/Error/PageNotFound').then(() => window.scrollTo(0, 0));
+            } 
+
+    }
+
+    // async next_and_previous_label()
+    // {
+    //     // below logic to hide next and previous page
+
+    //     let slug_url_array = JSON.parse(localStorage.getItem("ourteam_main_page_slug"));
+    //     let total_array_length = slug_url_array.length;
+    //     let index_number = parseInt(localStorage.getItem("ourteam_main_c_i"))+parseInt(1);
+
+    //       if(index_number==total_array_length)
+    //       {
+    //         await this.setState({
+    //                 next_label:false,
+    //         });
+    //       }
+    //       else{
+
+    //         await this.setState({
+    //                 next_label:true,
+    //             });
+    //       }
+
+    //       if(localStorage.getItem("ourteam_main_c_i")<=0)
+    //       {
+    //         await this.setState({
+    //                 previous_label:false,
+    //             });
+    //       }
+    //       else{
+
+    //         await this.setState({
+    //             previous_label:true,
+    //         });
+    //       }
+    // }
     
     render() {
-           const {name,bio,job_title_other,profile_image_link,title_slug,portfolio_slider} = this.state;
+           const {
+                  name,
+                  bio,
+                  job_title_other,
+                  profile_image_link,
+                  title_slug,
+                  portfolio_slider,
+                } = this.state;
+
+            const {previous_label,next_label} = this.props;
 
         return (             
             <Layout title={title_slug+' - Aurora Capital Partners'}>
@@ -93,11 +222,21 @@ export default class Teamdetail extends Component
 
                 <section className="cmn-pull-top team-detail-wrap">
                 <div className="fix-wrap">
-                <a href="#" onClick={this.backurl} className="view-news"><img src="/static/images/back-arrow-2.png" width="7" alt="" /> <span>View all Team</span></a>
+                <a href="#" onClick={this.backurl} className="view-news"><img src="/static/images/back-arrow-2.png" width="7" alt="" /> <span>View all Team</span></a>                
                 <div className="white-box">
+                    {
+                            previous_label &&
+                            <span className="left-content"><a href="#" onClick={(e) => this.n_and_p_pagination(e, 'p')}>Previous</a></span>   
+                    }
+
+                    {
+                        next_label &&
+                        <span className="right-side-link"><a href="#" onClick={(e) => this.n_and_p_pagination(e, 'n')}>Next</a></span>
+                    }
                 <div className="left-img">
                 <img src={profile_image_link} alt="" />
                 </div>
+                
                 <div className="right-content">
                 <h2 className="team-title">{name}</h2>
                 <h6>Partner</h6>
@@ -131,3 +270,5 @@ export default class Teamdetail extends Component
         );
       }
 }
+
+export default Hocnextpre(Teamdetail)

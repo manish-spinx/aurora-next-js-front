@@ -10,11 +10,7 @@ class Navbar extends Component
 {
     constructor(props) {
         super(props)
-
-        const token = localStorage.getItem("token");
-
-        
-
+        const token = localStorage.getItem("token");      
         let loggedIn = true
         if(token == null)
         {
@@ -24,6 +20,7 @@ class Navbar extends Component
         this.state = {
              display_status:'none',
              display_sub_status:'none',
+             display_sub_status_user:'none',
              responsive:false,
              innerwidth:'',
              loggedIn
@@ -33,9 +30,8 @@ class Navbar extends Component
         this.menu_toggle = this.menu_toggle.bind(this);
         this.menu_sub_toggle = this.menu_sub_toggle.bind(this);
         this.logout_frontend_side = this.logout_frontend_side.bind(this);
-        
-        
-       
+        this.menu_sub_toggle_user = this.menu_sub_toggle_user.bind(this);
+
     }
 
     async componentDidMount()
@@ -80,6 +76,25 @@ class Navbar extends Component
                          });
                 }
         }
+    }
+
+    async menu_sub_toggle_user(e)
+    {
+        e.preventDefault();    
+        if(this.props.isMobileSized && this.state.display_status=='block')
+        {
+                if(this.state.display_sub_status_user=='none')
+                {
+                    await this.setState({
+                        display_sub_status_user:'block',                
+                         });
+                }
+                else{
+                    await this.setState({
+                        display_sub_status_user:'none',                
+                         });
+                }
+        }
 
     }
 
@@ -88,7 +103,6 @@ class Navbar extends Component
         e.preventDefault()
         localStorage.removeItem("token");
         localStorage.removeItem("login_user_id");
-        //localStorage.removeItem("user_profile_link");   
         this.setState({
             loggedIn:false,                
         }); 
@@ -99,7 +113,7 @@ class Navbar extends Component
     
     render() {
 
-        const {display_status,display_sub_status,loggedIn} = this.state;       
+        const {display_status,display_sub_status,display_sub_status_user,loggedIn} = this.state;       
 
         return (   
             
@@ -147,7 +161,16 @@ class Navbar extends Component
                                     
                                     {
                                         loggedIn &&
-                                        <li><a onClick={this.logout_frontend_side}>Logout</a></li>
+                                        <li className="parent">
+                                        <a href="#" onClick={this.menu_sub_toggle_user} className={(display_sub_status_user=='block')?"open-subnav":''}>User Setting</a>
+                                            <div className="submenu-wrap" style={{"display":display_sub_status_user}}>
+                                                <ul>
+                                                    <li><Link href="/editprofile" as="/Editprofile"><a>Edit Profile</a></Link></li>
+                                                    <li><Link href="/changepassword" as="/Changepassword"><a>Change Password</a></Link></li>                                                    
+                                                    <li><a onClick={this.logout_frontend_side}>Logout</a></li>
+                                                </ul>
+                                            </div>
+                                        </li>
                                     }
                                     {
                                         loggedIn==false &&
@@ -184,7 +207,16 @@ class Navbar extends Component
                                     
                                     {
                                         loggedIn &&
-                                        <li><a onClick={this.logout_frontend_side}>Logout</a></li>
+                                        <li className="parent">
+                                        <Link href="#"><a>User Setting</a></Link>
+                                            <div className="submenu-wrap">
+                                                <ul>
+                                                    <li><Link href="/editprofile" as="/Editprofile"><a>Edit Profile</a></Link></li>
+                                                    <li><Link href="/changepassword" as="/Changepassword"><a>Change Password</a></Link></li>                                                    
+                                                    <li><a onClick={this.logout_frontend_side}>Logout</a></li>
+                                                </ul>
+                                            </div>
+                                        </li>
                                     }
                                     {
                                         loggedIn==false &&

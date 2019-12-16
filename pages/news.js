@@ -4,6 +4,7 @@ import Layout from '../components/Layout';
 import { Router } from '../routes';
 import moment from "moment";
 import Pagination from "react-js-pagination";
+import localStorage from "localStorage";
 import {FETCH_NODE_API_URL} from '../components/ServerApi';
 import { Ring,Circle,Grid,Ripple,DualRing } from 'react-awesome-spinners'
 
@@ -20,6 +21,7 @@ export default class News extends Component
 
         this.newdetail = this.newdetail.bind(this);
         this.handlePageChange = this.handlePageChange.bind(this);
+        this.all_news_list_data = this.all_news_list_data.bind(this);       
         
     }
 
@@ -28,8 +30,36 @@ export default class News extends Component
         e.preventDefault(); 
         const title_name = e.target.id;
         //Router.pushRoute('/News/'+title_name);
+
+        let check_slug =  this.state.current_data_slug.includes(title_name);
+        let check_slug_index = this.state.current_data_slug.indexOf(title_name);
+
+        localStorage.setItem("news_details_c_i",check_slug_index);
+        localStorage.setItem("news_details_t_i",(this.state.current_data_slug.length>0)?this.state.current_data_slug.length-1:this.state.current_data_slug.length);
+        localStorage.setItem("news_details_page_slug",JSON.stringify(this.state.current_data_slug));        
+
         Router.pushRoute('/News/'+title_name).then(() => window.scrollTo(0, 0));
     }
+
+    async all_news_list_data()
+    {
+        const res = await axios.post(FETCH_NODE_API_URL()+'all_news_pagination'); 
+
+        if(res.data.data.rows.length>0)
+        {
+            const record = res.data.data.rows;
+            const record_current_slug = [];
+
+            record.map((item, key) =>{
+                let dynamic_slug = item.slug
+                record_current_slug.push(dynamic_slug);
+            }); 
+
+            await this.setState({
+                current_data_slug:record_current_slug
+             });
+        }
+    }   
 
     async componentDidMount()
     {
@@ -37,7 +67,10 @@ export default class News extends Component
             loading_flag:true
          });
 
-        const res = await axios.post(FETCH_NODE_API_URL()+'all_news_pagination',{page:1});  
+        const res = await axios.post(FETCH_NODE_API_URL()+'all_news_pagination',{page:1}); 
+        
+        this.all_news_list_data();
+
         if(res.data.data.rows.length>0)
         {
             //const first_data =  res.data.data.rows[0];
@@ -72,7 +105,10 @@ export default class News extends Component
             loading_flag:true
          });
 
-          const res =await axios.post(FETCH_NODE_API_URL()+'all_news_pagination',{page:pageNumber});  
+          const res =await axios.post(FETCH_NODE_API_URL()+'all_news_pagination',{page:pageNumber});
+          
+          this.all_news_list_data();
+
           if(res.data.data.rows.length>0)
           {
               //const first_data =  res.data.data.rows[0];
@@ -140,17 +176,17 @@ export default class News extends Component
                     </div>
                     </section>               
                 </Layout>     
-       
-              
-                    <Pagination
+                 {
+                     api_data.length>0 &&
+                     <Pagination
                             activePage={this.state.activePage}
                             itemsCountPerPage={4}
                             totalItemsCount={32}
                             pageRangeDisplayed={5}
                             onChange={this.handlePageChange}
                     />
+                 }
             </div>
-
         </React.Fragment>  
             
         );

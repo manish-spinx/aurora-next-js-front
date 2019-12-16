@@ -105,7 +105,7 @@ submitForm(e){
                            Router.pushRoute('/').then(() => window.scrollTo(0, 0));
               }
               else{
-                 let username_and_password = 'Email And Password is Wrong. Please Try Again.';
+                 let username_and_password = response.data.message.message;//'Email And Password is Wrong. Please Try Again.';
                  this.setState({username_and_password});
               }
 
@@ -131,10 +131,14 @@ onChange_watch(e){
 
 register_form(e)
 {
-    console.log('this fun is calling...');
     e.preventDefault(); 
     Router.pushRoute('/Register').then(() => window.scrollTo(0, 0));
+}
 
+forget_password_link(e)
+{
+    e.preventDefault(); 
+    Router.pushRoute('/Forgetpassword').then(() => window.scrollTo(0, 0));
 }
 
 keyPress(e){
@@ -172,7 +176,7 @@ keyPress(e){
                 <span className="validation-error">{this.state.username_and_password}</span>
                 <br/>
                 <button className="btn btn-success btn-block" type="button" onClick={this.submitForm}><i className="fas fa-sign-in-alt"></i> Sign in</button>
-                {/* <a href="#" id="forgot_pswd">Forgot password?</a> */}
+                <a href="#" id="forgot_pswd" onClick={this.forget_password_link}>Forgot password?</a>
                 <hr/>
                 
                 <button className="btn btn-primary btn-block" type="button" id="btn-signup" onClick={this.register_form}>
