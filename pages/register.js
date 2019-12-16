@@ -127,9 +127,8 @@ submitForm(e){
                     });
               }
               else{
-
                 let emailError = response.data.message.message;
-                this.setState({emailError});
+                this.setState({emailError,passwordError:'',nameError:'',repasswordError:''});
               }
           })
           .catch((error) => 
