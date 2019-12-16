@@ -4,10 +4,10 @@ import { Router } from '../routes';
 import ReactHtmlParser from 'react-html-parser';
 import Layout from '../components/Layout';
 import localStorage from "localStorage";
-import {FETCH_NODE_API_URL} from '../components/ServerApi';
+import {FETCH_NODE_API_URL,PORTFOLIO_LOGO_URL} from '../components/ServerApi';
 import Hocnextpre from '../components/Hocnextpre';
 import FadeIn from 'react-fade-in';
-const server_link = process.env.PORTFOLIO_LOGOO; 
+const server_link = PORTFOLIO_LOGO_URL();//process.env.PORTFOLIO_LOGOO; 
 
 class Teamdetail extends Component 
 {

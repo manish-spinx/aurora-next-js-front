@@ -14,6 +14,12 @@ export function FRONT_RESET_PASSWORD_URL()
       return 'https://aurora-next-js.herokuapp.com/Resetpassword/';//'http://localhost:3010/Resetpassword/';//process.env.FRONT_RESET_PASSWORD_LINK;
 }
 
+export function PORTFOLIO_LOGO_URL() 
+{
+      return 'https://react-admin-panel-spinx.herokuapp.com/uploads/portfolio_logo/';//process.env.PORTFOLIO_LOGOO; 
+      //PORTFOLIO_LOGOO=
+}
+
 export function simple_header() 
 {
       // consider as 0 flag
