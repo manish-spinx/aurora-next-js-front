@@ -39,6 +39,11 @@
 /*** Our team page Style here ***/
 .search-field, .title-field { width: 44.3%; }
 .team-list ul li { width:23.4%;}
+.maxwidthmd{
+    bottom: 12%;
+    padding: 0px 20px;
+}
+
 }
 
 @media screen and (max-width:979px) { 
@@ -125,6 +130,10 @@ li.has-submenu.open-second-subnav > a:after { width:14px; height:8px; background
 .hp-recent-news { padding:30px 0px 70px;}
 .featured-news, .news-list { width:100%;}
 .featured-news { margin:0px 0px 28px; padding:45px 55px;}
+.maxwidthmd{
+    bottom: 5%;
+    padding: 0px 30px;
+}
 .news-list ul li { padding:55px;}
 .news-list ul li h3 { font-size:22px; line-height:28px; }
 /*** Footer Style here ***/
