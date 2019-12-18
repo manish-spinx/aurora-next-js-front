@@ -242,6 +242,7 @@ h6 {
   display: -webkit-flex;
   display: flex;
   justify-content: center;
+  padding: 30px 0px;
 }
 .pagination li{
     padding: 10px 15px;

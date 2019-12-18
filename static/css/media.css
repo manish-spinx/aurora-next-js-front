@@ -59,6 +59,9 @@
 .copyright { padding: 15px 0px 15px 15%; }
 .copyright .f-left span { margin-right:4px;}
 .copyright .f-left a { padding:0px 4px;}
+.news-grid .grid-item{
+    width: 46%;
+}
 /*** Homepage Style here***/
 .hp-banner .imgDiv { height: 550px; }
 .hp-banner .banner-title h1 { font-size:60px; line-height:70px;}
@@ -94,6 +97,9 @@ ul.logo-list li a img { max-width:145px; max-height:145px;}
 /*** Header Style here ***/
 .navbar-header { width:100%;}
 .logo { margin:11px 0px; max-width:187px;}
+.news-grid .grid-item{
+    margin: 10px auto !important;
+}
 .navbar-toggle { display:block;}
 .nav-brand {display: none; padding:0px; margin:0px; height: calc(100% - 59px); position:fixed; top:59px; left:0px; right:0px; background:#FFFFFF; overflow:auto;}
 .nav-brand > ul > li { width:100%; text-align:left; border-top: 1px solid #D6D6D6;}
